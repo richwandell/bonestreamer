@@ -3,7 +3,7 @@ bonestreamer
 
 Microsoft Kinect data streamer with blender plugin
 
-= What is this for?
+What is this for?
  * Streaming Kinect joint data into other programs.
  * Streaming into a web browser
  * Sending Joint data accross a network connection.

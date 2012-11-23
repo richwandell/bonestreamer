@@ -33,16 +33,17 @@
       var image_data, img,
         _this = this;
       this.getJoints();
-      this.ctx.clearRect(0, 0, 1024, 768);
       if (data.rgb) {
         image_data = 'data:image/jpg;base64,' + data.rgb;
         img = new Image();
         img.onload = function() {
+          _this.ctx.clearRect(0, 0, 1024, 768);
           _this.ctx.drawImage(img, 0, 0, 1024, 768);
           return _this.drawBones(data);
         };
         return img.src = image_data;
       } else {
+        this.ctx.clearRect(0, 0, 1024, 768);
         return this.drawBones(data);
       }
     };

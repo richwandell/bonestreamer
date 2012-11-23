@@ -10,16 +10,18 @@ class Main
      
      deviceReady: (data)=>
           @getJoints()
-          @ctx.clearRect 0, 0, 1024, 768
+          
           
           if data.rgb
                image_data = 'data:image/jpg;base64,'+data.rgb
                img = new Image()
                img.onload = =>
+                    @ctx.clearRect 0, 0, 1024, 768
                     @ctx.drawImage(img, 0, 0, 1024, 768)
                     @drawBones(data)
                img.src = image_data
           else
+               @ctx.clearRect 0, 0, 1024, 768
                @drawBones(data)
 
      getJoints:=>

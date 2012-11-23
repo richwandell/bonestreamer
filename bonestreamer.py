@@ -52,7 +52,7 @@ window_height = win32api.GetSystemMetrics(1)
 
 def video_frame_ready(video_frame):
     if objs['video_stream'].get() == 1:
-        image = Image.fromstring('CMYK', (640, 480), video_frame.image.bits)
+        image = Image.fromstring('RGBA', (640, 480), video_frame.image.bits)
         
         if len(objs['image_filter']) > 0:
             for filter in objs['image_filter']:
