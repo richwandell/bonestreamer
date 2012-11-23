@@ -108,7 +108,7 @@ class Main:
         elif event.x - 616 > 0 and event.x < 680 and event.y > 419:
             self.showSkeletonWindow()
         elif event.x < 90 and event.x > 14 and event.y > 405 and event.y < 481:
-            webbrowser.open_new("www.github.com/richwandell")
+            webbrowser.open_new("www.github.com/richwandell/bonestreamer")
      
     """
          TODO write this function
