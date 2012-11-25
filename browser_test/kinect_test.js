@@ -6,7 +6,7 @@
   Main = (function() {
 
     Main.prototype.drawBones = function(data) {
-      var joint, x, _i, _len, _ref, _results;
+      var head, joint, x, x_pos, y_pos, _i, _len, _ref, _results;
       _ref = data.bones;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -17,8 +17,16 @@
             _results1 = [];
             for (joint in x) {
               this.ctx.beginPath();
-              this.ctx.arc(500 + (x[joint]['x'] * 500), 200 + -x[joint]['y'] * 500, 40, 0, 2 * Math.PI);
-              _results1.push(this.ctx.stroke());
+              x_pos = 512 + (x[joint]['x'] * 500);
+              y_pos = 384 + -x[joint]['y'] * 500;
+              this.ctx.arc(x_pos, y_pos, 10 * x[joint]['z'], 0, 2 * Math.PI);
+              this.ctx.fill();
+              if (joint === 'head') {
+                head = $("#hulk_mask")[0];
+                _results1.push(this.ctx.drawImage(head, x_pos - 50, y_pos - 50, 100, 100));
+              } else {
+                _results1.push(void 0);
+              }
             }
             return _results1;
           }).call(this));

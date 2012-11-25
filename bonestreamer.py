@@ -4,6 +4,9 @@ from Tkinter import Tk
 from classes import skeleton_window, layout_manager, skeleton_server, systray_icon_manager
 import ctypes, win32gui, win32gui_struct, win32api, sqlite3, base64, StringIO, ImageFilter
 from PIL import Image
+from threading import Lock
+
+
 
 myappid = 'RW.Bonestreamer.ClientApp.1'
 ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
@@ -13,6 +16,7 @@ kinect = nui.Runtime()
 kinect.skeleton_engine.enabled = True
 
 skeleton_to_depth_image = nui.SkeletonEngine.skeleton_to_depth_image
+
 
 objs = {
      'SkeletonWindow': False,
@@ -24,7 +28,8 @@ objs = {
      'open_video': lambda: kinect.video_stream.open(nui.ImageStreamType.Video, 2, nui.ImageResolution.Resolution640x480, nui.ImageType.Color),
      'video_data': False,
      'kinect': kinect,
-     'image_filter': []  
+     'image_filter': [],
+     'lock': Lock()
 }
 classes = {
      'SkeletonServer': skeleton_server.SkeletonServer,
@@ -53,16 +58,18 @@ window_height = win32api.GetSystemMetrics(1)
 def video_frame_ready(video_frame):
     if objs['video_stream'].get() == 1:
         image = Image.fromstring('RGBA', (640, 480), video_frame.image.bits)
-        
+                      
         if len(objs['image_filter']) > 0:
             for filter in objs['image_filter']:
-                print filter
                 image = image.filter(filter_map[filter])
         
         output = StringIO.StringIO()
         image.save(output, format='JPEG')
-        
-        objs['video_data'] = base64.b64encode(output.getvalue())
+        with objs['lock']:
+            objs['video_data'] = base64.b64encode(output.getvalue())
+    else:
+        with objs['lock']:
+            objs['video_data'] = False
 
 def skeleton_frame_ready(skeleton_frame):
     global objs, window_width, window_height
@@ -130,25 +137,28 @@ def skeleton_frame_ready(skeleton_frame):
                'z': data.SkeletonPositions[which].z
         }
 
+
     if objs['mouse_control_bool'] == True:
-        objs['positions'] = scaledBones()
-        for x in objs['positions']:
-            if x['hand_right']['x'] > 0:
-                win32api.SetCursorPos(
-                    (
-                        int(x['hand_right']['x']), 
-                        int(x['hand_right']['y']) 
+        with objs['lock']:
+            objs['positions'] = scaledBones()
+            for x in objs['positions']:
+                if x['hand_right']['x'] > 0:
+                    win32api.SetCursorPos(
+                        (
+                            int(x['hand_right']['x']), 
+                            int(x['hand_right']['y']) 
+                        )
                     )
-                )
     elif objs['SkeletonWindow'] != False:
-        objs['positions'] = scaledBones()
-        objs['SkeletonWindow'].draw()
+        with objs['lock']:
+            objs['positions'] = scaledBones()
+            objs['SkeletonWindow'].draw()
     else:
-        objs['positions'] = unScaledBones()
+        with objs['lock']:
+            objs['positions'] = unScaledBones()
 
 kinect.skeleton_frame_ready += skeleton_frame_ready
 kinect.video_frame_ready += video_frame_ready
-
 
 root = Tk()
 frame = layout_manager.Main(root, objs, classes)

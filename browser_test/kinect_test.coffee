@@ -5,8 +5,13 @@ class Main
                if x['hand_left']['x'] != 0
                     for joint of x
                          @ctx.beginPath()
-                         @ctx.arc( 500 + (x[joint]['x'] * 500), 200 + -x[joint]['y'] * 500 , 40, 0, 2*Math.PI )
-                         @ctx.stroke()
+                         x_pos = 512 + (x[joint]['x'] * 500)
+                         y_pos = 384 + -x[joint]['y'] * 500
+                         @ctx.arc(x_pos,  y_pos, 10 * x[joint]['z'], 0, 2*Math.PI )
+                         @ctx.fill()
+                         if joint == 'head'
+                              head = $("#hulk_mask")[0]
+                              @ctx.drawImage(head, x_pos - 50, y_pos - 50, 100, 100)
      
      deviceReady: (data)=>
           @getJoints()
