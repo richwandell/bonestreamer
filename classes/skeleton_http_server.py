@@ -11,17 +11,16 @@ class SkeletonHttpServer(BaseHTTPServer.BaseHTTPRequestHandler):
         if 'callback' in self.path:
             req = self.path.split("?callback=")
             cb = req[1].split("&")[0]
-            with objs['lock']:
-                self.wfile.write(cb+"("+json.dumps({
-                    'bones': objs['positions'],
-                    'rgb': objs['video_data']
-                })+")")
+            
+            self.wfile.write(cb+"("+json.dumps({
+                'bones': objs['positions'],
+                'rgb': objs['video_data']
+            })+")")
         else:
-            with objs['lock']:
-                self.wfile.write(json.dumps({
-                    'bones': objs['positions'],
-                    'rgb': objs['video_data']
-                }))
+            self.wfile.write(json.dumps({
+                'bones': objs['positions'],
+                'rgb': objs['video_data']
+            }))
           
           
     def do_HEAD(self):
