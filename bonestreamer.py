@@ -14,7 +14,7 @@ kinect.skeleton_engine.enabled = True
 
 skeleton_to_depth_image = nui.SkeletonEngine.skeleton_to_depth_image
 
-objs = {
+objs = { 
      'SkeletonWindow': False,
      'SkeletonServer': False,
      'positions': ['ok'],
